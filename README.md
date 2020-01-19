@@ -1,147 +1,147 @@
-# Overview of CLIP OS 4
+# Aperçu de CLIP OS 4
 
-[CLIP OS](https://clip-os.org) is a GNU/Linux meta-distribution designed with the following hypotheses in mind:
-* everyone (developer, administrator, end user) is fallible and can commit hazardous actions by mistake;
-* all code can contain vulnerabilities, which means that we must take into account the threat, minimize it (e.g., shrink the attack surface), identify potential residual vulnerabilities, and be able to deploy over-the-air updates;
-* only trusted code should be executable (no arbitrary code execution nor persistence);
-* we consider that there are multiple administrator roles, according to organizational measures or to limit privileges available to one person;
-* the system can have multiple authorized users;
+[CLIP OS](https://clip-os.org) est une méta-distribution GNU/Linux conçue avec les hypothèses suivantes :
+* tout le monde (développeur, administrateur, utilisateur final) est faillible et peut commettre des actions dangereuses par erreur;
+* tout code peut contenir des vulnérabilités, ce qui signifie que nous devons prendre en compte la menace, la minimiser (p. ex., réduire la surface d'attaque), identifier les vulnérabilités résiduelles potentielles et être en mesure de déployer des mises à jour en direct;
+* seul le code de confiance doit être exécutable (pas d'exécution de code arbitraire ni de persistance);
+* nous considérons qu'il y a plusieurs rôles d'administrateur, selon les mesures organisationnelles ou pour limiter les privilèges disponibles à une personne;
+* le système peut avoir plusieurs utilisateurs autorisés;
 * the system can be connected to untrusted networks (e.g., in a road warrior environment);
-* log events should be available to detect attacks or misbehavior;
-* and multiple user environments can manage data of different sensitivities: *low* (e.g., Internet) and *high* (private network).
+* les événements du journal devraient être disponibles pour détecter les attaques ou les mauvais comportements;
+* et de multiples environnements d'utilisateurs peuvent gérer des données de différentes sensibilités : *faible* (p. ex., Internet) et *élevé* (réseau privé).
 
-To achieve these requirements, CLIP OS provides multiple security enhancements such as process isolation, tailored permission model, and multiple hardening developments deeply integrated into the system.
-There are currently two main use cases to the CLIP OS project, each one provided by a dedicated CLIP OS species: an end user system targeting common office tasks, and a VPN gateway.
+Pour répondre à ces exigences, CLIP OS fournit de multiples améliorations de sécurité telles que l'isolation des processus, un modèle de permission adapté et de multiples développements de durcissement profondément intégrés dans le système.
+Il existe actuellement deux principaux cas d'utilisation du projet CLIP OS, chacun étant fourni par une espèce de CLIP OS dédiée : un système d'utilisateur final ciblant les tâches de bureau communes, et une passerelle VPN.
 
-CLIP OS started in 2005 and is now publicly developed with the [version 5](https://github.com/clipos).
-This version 4 of CLIP OS is not intended to be used as is.
-Some packages may be missing and others may be incomplete because of the initial publication process.
-However, as for the version 5, you are free to pick any components or patches (according to their license terms) that may fit your needs.
+CLIP OS a débuté en 2005 et est maintenant développé publiquement avec la [version 5](https://github.com/clipos).
+Cette version 4 de CLIP OS n'est pas destinée à être utilisée telle quelle.
+Certains dossiers peuvent être manquants et d'autres peuvent être incomplets en raison du processus de publication initial.
+Cependant, comme pour la version 5, vous êtes libre de choisir les composants ou les correctifs (selon les termes de leur licence) qui peuvent répondre à vos besoins.
 
-## Development, packaging and update
+## Développement, conditionnement et mise à jour
 
-CLIP OS is based on [Gentoo Hardened](https://wiki.gentoo.org/wiki/Hardened_Gentoo), which comes with a [hardened toolchain](https://wiki.gentoo.org/wiki/Hardened/Toolchain) and multiple security enhancements.
-Thus the package manager on the developer side is Portage, but the resulting builds for a CLIP OS distribution are shipped with Debian packages thanks to a [custom wrapper](https://github.com/clipos-archive/src_platform_clip-deb).
-Two [signatures](https://github.com/clipos-archive/src_platform_gen-crypt), with a CLIP OS-specific format, are appended to each Debian package: one for the developer and another for a controller, thus allowing a two-level sign-off on every update.
-The [update mechanism](https://github.com/clipos-archive/src_platform_clip-install-clip) is fully automated and run in the background in a dedicated VServer container.
-The [critical system components](https://github.com/clipos-archive/clipos4_portage-overlay-clip/blob/master/clip-conf/clip-core-conf) (e.g., kernel, update mechanism, user management, network configuration, etc.) are updated following the [A/B update principle](https://source.android.com/devices/tech/ota/ab/) with two different partition sets updated alternatively.
-This ensures that the system remains bootable and recoverable if a critical update fails or is interrupted.
-An on-the-fly update can be applied for [non-critical components](https://github.com/clipos-archive/clipos4_portage-overlay-clip/blob/master/clip-conf/rm-apps-conf) (e.g., user applications), thus not requiring a reboot for minor updates but still being able to automatically rollback if an error occurs.
+CLIP OS est basé sur [Gentoo Hardened](https://wiki.gentoo.org/wiki/Hardened_Gentoo), qui vient avec un [hardened toolchain](https://wiki.gentoo.org/wiki/Hardened/Toolchain) et de multiples améliorations de la sécurité.
+Ainsi, le gestionnaire de paquets du côté des développeurs est Portage, mais les constructions résultantes pour une distribution CLIP OS sont livrées avec des paquets Debian grâce à un [custom wrapper](https://github.com/clipos-archive/src_platform_clip-deb).
+Deux [signatures](https://github.com/clipos-archive/src_platform_gen-crypt), avec un format spécifique au système d'exploitation CLIP, sont ajoutés à chaque paquet Debian : un pour le développeur et un autre pour un contrôleur, permettant ainsi une signature à deux niveaux pour chaque mise à jour.
+Le [mécanisme de mise à jour](https://github.com/clipos-archive/src_platform_clip-install-clip) est entièrement automatisé et exécuté en arrière-plan dans un conteneur VServer dédié.
+Les [composants du système essentiels](https://github.com/clipos-archive/clipos4_portage-overlay-clip/blob/master/clip-conf/clip-core-conf) (p. ex. le noyau, le mécanisme de mise à jour, la gestion des utilisateurs, la configuration du réseau, etc.) sont mises à jour à la suite par le [principe de mise à jour A/B](https://source.android.com/devices/tech/ota/ab/) avec deux jeux de partitions différents mis à jour alternativement.
+Cela garantit que le système reste amorçable et récupérable si une mise à jour critique échoue ou est interrompue.
+Une mise à jour à la volée peut être demandée pour les [éléments non critiques](https://github.com/clipos-archive/clipos4_portage-overlay-clip/blob/master/clip-conf/rm-apps-conf) (par exemple, les applications utilisateur), ne nécessitant donc pas de redémarrage pour les mises à jour mineures, mais pouvant toujours être automatiquement annulées si une erreur se produit.
 
-Multiple packages are patched to fit the needs of CLIP OS.
-These modifications can be found in [portage-overlay](https://github.com/clipos-archive/clipos4_portage-overlay) (identified with [USE flags](https://github.com/clipos-archive/clipos4_portage-overlay-clip/blob/master/profiles/use.desc)), and custom (and imported) developments are packaged in [portage-overlay-clip](https://github.com/clipos-archive/clipos4_portage-overlay-clip).
-The related sources are listed in the Repo [manifest](https://github.com/clipos-archive/clipos4_manifest).
+Plusieurs paquets sont patchés pour répondre aux besoins de CLIP OS.
+Ces modifications peuvent être trouvées dans [portage-overlay](https://github.com/clipos-archive/clipos4_portage-overlay) (identifié avec [USE flags](https://github.com/clipos-archive/clipos4_portage-overlay-clip/blob/master/profiles/use.desc)), et les développements sur mesure (et importés) sont emballés dans [portage-overlay-clip](https://github.com/clipos-archive/clipos4_portage-overlay-clip).
+Les sources correspondantes sont répertoriées dans le Repo [manifest](https://github.com/clipos-archive/clipos4_manifest).
 
-## Partitioning and hardening of services
+## Cloisonnement et durcissement des services
 
-CLIP OS uses a lot of containers (internally called *jails*), following the defense in depth principle, thanks to [Linux-VServer](http://www.linux-vserver.org) features.
-Linux-VServer is a kernel patch which leverages Linux namespaces to create secure partitioning of processes.
-Among other things, it allows to tag processes, resources and networks with context identifiers (XIDs) and network identifiers (NIDs).
-It also adds a local network per jail (with no NIC), PTS restrictions, multiple `/proc` visibility restrictions, WATCH (audit) and ADMIN roles, reduces covert channels, and adds multilevel restrictions.
-CLIP OS does not use the upstream VServer userspace tools but a minimal and security-focused [vsctl](https://github.com/clipos-archive/src_platform_vsctl).
-A sample jail configuration can be found for a [user jail](https://github.com/clipos-archive/src_platform_clip-vserver/blob/master/jails/rm_b) or a [web server jail](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/www-servers/nginx/files/clip/rb/jail).
+CLIP OS utilise beaucoup de conteneurs (appelés en interne *jails*), suivant le principe de la défense en profondeur, grâce aux [Linux-VServer](http://www.linux-vserver.org) caractéristiques.
+Linux-VServer est un correctif du noyau qui exploite les espaces de noms Linux pour créer un partitionnement sécurisé des processus.
+Il permet entre autres de marquer les processus, les ressources et les réseaux avec des identificateurs de contexte (XID) et des identificateurs de réseau (NID).
+Il ajoute également un réseau local par prison (sans NIC), des restrictions PTS, de multiples restrictions de visibilité `/proc`, des rôles WATCH (audit) et ADMIN, réduit les canaux cachés et ajoute des restrictions à plusieurs niveaux.
+CLIP OS n'utilise pas les outils de l'espace utilisateur VServer en amont mais un [vsctl](https://github.com/clipos-archive/src_platform_vsctl).
+Un exemple de configuration de l'environnement jail peut être trouvé pour un [user jail](https://github.com/clipos-archive/src_platform_clip-vserver/blob/master/jails/rm_b) ou un [web server jail](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/www-servers/nginx/files/clip/rb/jail).
 
-Multiple [jail layouts](https://github.com/clipos-archive/clipos4_portage-overlay-clip/blob/master/clip-layout), mostly read-only, are used for [system services](https://github.com/clipos-archive/src_platform_core-services/blob/master/jails).
-The content of each jail is minimal to reduce the tools available to attackers (e.g., [BusyBox](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/sys-apps/busybox/busybox-1.25.1-r1.ebuild#L82)).
-Communications between jails are handled through secure IPC (e.g., UNIX sockets or SSH on the [local loop](https://github.com/clipos-archive/src_platform_clip-patches/blob/master/2002_loopback_classB.patch)).
-[Firewall rules](https://github.com/clipos-archive/src_platform_clip-generic-net/blob/master/lib/netfilter) control all network accesses (e.g., local loop, Ethernet, Wi-Fi, UMTS, etc.).
-Moreover, critical services are hardened with custom patches: [strongSwan](https://github.com/clipos-archive/src_platform_strongswan-patches), [Syslog-NG](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/app-admin/syslog-ng/files/syslog-ng-3.4.7-clip-jail.patch), [DHCP client](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/net-misc/dhcpcd/files/dhcpcd-6.4.7-clip.patch), [Nginx](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/www-servers/nginx/files/nginx-1.7.6-clip-chroot.patch), etc.
+De multiples [plans de prison] (https://github.com/clipos-archive/clipos4_portage-overlay-clip/blob/master/clip-layout), pour la plupart en lecture seule, sont utilisés pour les [services système] (https://github.com/clipos-archive/src_platform_core-services/blob/master/jails).
+Le contenu de chaque prison est minimal pour réduire les outils disponibles pour les attaquants (par exemple, [BusyBox](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/sys-apps/busybox/busybox-1.25.1-r1.ebuild#L82)).
+Les communications entre les environnements jail sont gérées par des IPC sécurisés (par exemple, les sockets UNIX ou SSH sur la [boucle locale](https://github.com/clipos-archive/src_platform_clip-patches/blob/master/2002_loopback_classB.patch)).
+Les [règles de pare-feu](https://github.com/clipos-archive/src_platform_clip-generic-net/blob/master/lib/netfilter) contrôlent tous les accès au réseau (par exemple, la boucle locale, Ethernet, Wi-Fi, UMTS, etc.).
+). De plus, les services critiques sont renforcés par des patchs personnalisés : [strongSwan](https://github.com/clipos-archive/src_platform_strongswan-patches), [Syslog-NG](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/app-admin/syslog-ng/files/syslog-ng-3.4.7-clip-jail.patch), [DHCP client](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/net-misc/dhcpcd/files/dhcpcd-6.4.7-clip.patch), [Nginx](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/www-servers/nginx/files/nginx-1.7.6-clip-chroot.patch), etc.
 
-To help create these containers and reduce privileges, CLIP OS provides libraries of security helpers: [clip-lib](https://github.com/clipos-archive/src_platform_clip-lib) (secure privilege management) and [clip-libvserver](https://github.com/clipos-archive/src_platform_clip-libvserver) (container management).
+Pour aider à créer ces conteneurs et réduire les privilèges, CLIP OS fournit des bibliothèques d'aides à la sécurité : [clip-lib](https://github.com/clipos-archive/src_platform_clip-lib) (gestion sécurisée des privilèges) et [clip-libvserver](https://github.com/clipos-archive/src_platform_clip-libvserver) (gestion des conteneurs).
 
-## CLIP-LSM and custom Linux patches
+## CLIP-LSM et correctifs Linux personnalisés
 
-[CLIP-LSM](https://github.com/clipos-archive/src_platform_clip-lsm) is a custom Linux Security Module enhancing the Linux permission model (capabilities), adding extra VServer permissions (e.g., IPsec enforcement) and leveraging hardening features from [PaX](https://pax.grsecurity.net) and [grsecurity](https://grsecurity.net).
-Multiple other [Linux patches](https://github.com/clipos-archive/src_platform_clip-patches) fix some issues and add miscellaneous security features.
+CLIP-LSM](https://github.com/clipos-archive/src_platform_clip-lsm) est un module de sécurité Linux personnalisé qui améliore le modèle de permission Linux (capacités), ajoute des permissions VServer supplémentaires (p. ex., application d'IPsec) et tire parti des fonctions de renforcement de [PaX](https://pax.grsecurity.net) et [grsecurity](https://grsecurity.net).
+De nombreux autres [correctifs Linux](https://github.com/clipos-archive/src_platform_clip-patches) corrigent certains problèmes et ajoutent diverses fonctionnalités de sécurité.
 
-Root and kernel-spawned processes are restricted through an extra capability bounding set, a limited enforcement of root setuid bits and a strict Trusted Path Execution.
+Les processus racine et noyau sont limités par un ensemble de limites de capacités supplémentaires, une application limitée des bits setuid de la racine et une exécution stricte du Trusted Path.
 
-[Devctl](https://github.com/clipos-archive/src_platform_clip-lsm/blob/master/security/clsm/devctl.c) is a mechanism providing extended device access control, e.g., to lock security-relevant mount options, and enforce mandatory device and mount access control (read, write and execute).
+[Devctl](https://github.com/clipos-archive/src_platform_clip-lsm/blob/master/security/clsm/devctl.c) est un mécanisme fournissant un contrôle d'accès étendu aux périphériques, par exemple pour verrouiller les options de montage pertinentes pour la sécurité, et appliquer le contrôle d'accès obligatoire aux périphériques et aux montages (lecture, écriture et exécution).
 
-[Veriexec](https://github.com/clipos-archive/src_platform_clip-lsm/blob/master/security/clsm/veriexec.c) is a simple right management system (inspired from NetBSD) which also checks files integrity.
-The [configuration](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/sys-apps/coreutils/coreutils-8.20-r2.ebuild#L193) is independent from the target file(-system) and enables easy on-the-fly updates thanks to the [verictl](https://github.com/clipos-archive/src_platform_verictl) tool.
-Veriexec handles [extra rights](https://github.com/clipos-archive/src_platform_clip-lsm/blob/master/include/linux/clip_lsm.h) per jail, either to add extra access control for operations which are allowed by default on a vanilla kernel (e.g., network access or specific IPsec-related operations), or provide a limited way to allow certain operations that usually require extensive capabilities (e.g., kernel log access).
-It is also in charge of granting some permission to scripts, according to a composition of effective, inherited and permissive flags.
+[Veriexec](https://github.com/clipos-archive/src_platform_clip-lsm/blob/master/security/clsm/veriexec.c) est un système simple de gestion des droits (inspiré de NetBSD) qui vérifie également l'intégrité des fichiers.
+La [configuration](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/sys-apps/coreutils/coreutils-8.20-r2.ebuild#L193) est indépendante du système de fichiers cible et permet des mises à jour faciles à la volée grâce à l'outil [verictl](https://github.com/clipos-archive/src_platform_verictl).
+Veriexec gère les [droits supplémentaires](https://github.com/clipos-archive/src_platform_clip-lsm/blob/master/include/linux/clip_lsm.h) par prison, soit pour ajouter un contrôle d'accès supplémentaire pour les opérations qui sont autorisées par défaut sur un noyau vanille (par exemple, l'accès réseau ou des opérations spécifiques liées à IPsec), soit pour fournir un moyen limité d'autoriser certaines opérations qui nécessitent habituellement des capacités étendues (par exemple, l'accès au journal du noyau).
+Il est également chargé d'accorder certaines permissions aux scripts, selon une composition de drapeaux effectifs, hérités et permissifs.
 
-One of the basic principles of CLIP OS is the enforcement of a "write *xor* execute" policy, both at the memory management level and with regards to filesystem access rights.
-This means that a process should not be allowed to execute something not provided by the system, thus avoiding arbitrary code execution and persistent attacks.
-The main goal is to protect the kernel by restricting arbitrary syscalls that an attacker could perform with a crafted binary or certain script languages.
-It also improves the multilevel isolation by reducing the ability of an attacker to use side channels with specific code.
-These restrictions can natively be enforced for ELF binaries (with the `noexec` mount option) but require a kernel patch to properly handle scripts (e.g., Python, Perl).
-A new open flag ([O\_MAYEXEC](https://github.com/clipos-archive/src_platform_clip-patches/blob/master/1901_open_mayexec.patch)) is then used by [modified interpreters](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/dev-lang/perl/files/perl-5.16.3-clip-mayexec.patch).
+Un des principes de base de CLIP OS est l'application d'une politique "write *xor* execute", tant au niveau de la gestion de la mémoire qu'au niveau des droits d'accès au système de fichiers.
+Cela signifie qu'un processus ne doit pas être autorisé à exécuter quelque chose qui n'est pas fourni par le système, évitant ainsi l'exécution arbitraire de code et les attaques persistantes.
+L'objectif principal est de protéger le noyau en limitant les appels système arbitraires qu'un attaquant pourrait effectuer avec un binaire élaboré ou certains langages de script.
+Il améliore également l'isolation multiniveau en réduisant la capacité d'un attaquant à utiliser des canaux secondaires avec un code spécifique.
+Ces restrictions peuvent être appliquées nativement pour les binaires ELF (avec l'option de montage `noexec`) mais nécessitent un correctif du noyau pour gérer correctement les scripts (par exemple, Python, Perl).
+Un nouveau drapeau ouvert ([O\_MAYEXEC](https://github.com/clipos-archive/src_platform_clip-patches/blob/master/1901_open_mayexec.patch)) est alors utilisé par les [interprètes modifiés](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/dev-lang/perl/files/perl-5.16.3-clip-mayexec.patch).
 
-Since the chroot syscall is used as a secondary isolation mechanism, to further isolate some processes within a given VServer container, some extra restrictions on chroot are also enforced: FD leak and access safeguards, ptrace restrictions, integration with grsecurity and VServer, etc.
+Comme l'appel système chroot est utilisé comme un mécanisme d'isolation secondaire, pour isoler davantage certains processus dans un conteneur VServer donné, certaines restrictions supplémentaires sur le chroot sont également appliquées : Protection contre les fuites et accès aux FD, restrictions ptrace, intégration avec grsecurity et VServer, etc.
 
-## Multilevel security
+## Sécurité à plusieurs niveaux
 
-CLIP OS can be used as a [multilevel](https://en.wikipedia.org/wiki/Multilevel_security) operating system, which helps handle data of different sensitivities on the same system, and can limit data leak.
-The end user can use two desktop environments: a *low* level (called `RM_B`) connected to Internet and a *high* level (called `RM_H`) to deal with sensitive data, only accessible through a VPN (IPsec).
-Each environment contains usual applications (e.g., web browser, office suite, graphic software) which are confined to their assigned level (e.g., network, files, GUI).
+CLIP OS peut être utilisé comme système d'exploitation [multiniveau] (https://en.wikipedia.org/wiki/Multilevel_security), ce qui permet de traiter des données de différentes sensibilités sur un même système et de limiter les fuites de données.
+L'utilisateur final peut utiliser deux environnements de bureau : un niveau *faible* (appelé `RM_B`) connecté à Internet et un niveau *élevé* (appelé `RM_H`) pour traiter les données sensibles, uniquement accessible par un VPN (IPsec).
+Chaque environnement contient des applications habituelles (par exemple, navigateur web, suite bureautique, logiciel graphique) qui sont confinées à leur niveau assigné (par exemple, réseau, fichiers, interface graphique).
 
-Multiple components must be aware of this security model, enforce it, and enable the [end user to manage multiple levels](https://www.ssi.gouv.fr/uploads/2018/04/salaun-m_these_manuscrit.pdf):
-* display levels to user ([window manager](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/x11-wm/openbox/files/openbox-3.5.0-clip-domains.patch) and [trusted panel](https://github.com/clipos-archive/clipos4_portage-overlay-clip/blob/master/x11-misc));
-* secure and trusted GUI isolation ([GUI domains](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/x11-base/xorg-server/files/xorg-server-1.19.3-clip-domains.patch) and [VNC viewers](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/net-misc/tigervnc));
-* black and red diodes ([cryptd](https://github.com/clipos-archive/src_platform_cryptd) and [cryptclt](https://github.com/clipos-archive/src_platform_cryptclt)) to push or decrypt files from the *low* to the *high* level (following the [Bell-LaPadula model](https://en.wikipedia.org/wiki/Bell%E2%80%93LaPadula_model)), or encrypt files from the *high* to the *low* level;
-* VServer levels;
-* external mass storage signature and data encryption;
-* and multilevel [smartcard proxy](https://github.com/caml-pkcs11/caml-crush).
+De multiples composantes doivent connaître ce modèle de sécurité, l'appliquer et permettre à l'utilisateur final de gérer plusieurs niveaux (https://www.ssi.gouv.fr/uploads/2018/04/salaun-m_these_manuscrit.pdf) :
+* afficher les niveaux à l'utilisateur ([gestionnaire de fenêtre](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/x11-wm/openbox/files/openbox-3.5.0-clip-domains.patch) et [panneau de confiance](https://github.com/clipos-archive/clipos4_portage-overlay-clip/blob/master/x11-misc)) ;
+* isolation sécurisée et fiable de l'interface graphique ([domaines de l'interface graphique](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/x11-base/xorg-server/files/xorg-server-1.19.3-clip-domains.patch) et [visionneuses VNC](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/net-misc/tigervnc)) ;
+* des diodes noires et rouges ([cryptd](https://github.com/clipos-archive/src_platform_cryptd) et [cryptclt](https://github.com/clipos-archive/src_platform_cryptclt)) pour pousser ou décrypter les fichiers du niveau *faible* au niveau *élevé* (suivant le [modèle Bell-LaPadula](https://en.wikipedia.org/wiki/Bell%E2%80%93LaPadula_model)), ou crypter les fichiers du niveau *élevé* au niveau *faible* ;
+* niveaux VServer ;
+* signature de mémoire de masse externe et cryptage des données ;
+* et [proxy à carte à puce] multiniveau (https://github.com/caml-pkcs11/caml-crush).
 
-CLIP OS can also handle external devices per jail: a scanner, a printer, a webcam, a sound card and a smartcard.
+CLIP OS peut également gérer des périphériques externes par prison : un scanner, une imprimante, une webcam, une carte son et une carte à puce.
 
-## Admin and audit roles
+## Rôles d'administration et d'audit
 
-A CLIP OS user account can be configured with a composition of privileged roles: administrator (admin) and auditor (audit).
-It is important to note that the privilege delegation for these roles is not based on granting partial or total root privileges (i.e. no `sudo` or equivalent), but on read and/or write access to specific configuration files within the VServer container dedicated to each role.
-Modified configuration files are then securely parsed, and applied if valid, by privileged daemons outside of those containers.
+Un compte utilisateur CLIP OS peut être configuré avec une composition de rôles privilégiés : administrateur (admin) et auditeur (audit).
+Il est important de noter que la délégation de privilèges pour ces rôles n'est pas basée sur l'octroi de privilèges root partiels ou totaux (c'est-à-dire pas de `sudo` ou équivalent), mais sur l'accès en lecture et/ou en écriture à des fichiers de configuration spécifiques dans le conteneur VServer dédié à chaque rôle.
+Les fichiers de configuration modifiés sont ensuite analysés de manière sécurisée, et appliqués, s'ils sont valides, par des démons privilégiés en dehors de ces conteneurs.
 
-The goal of the admin role is to configure the system.
-However, such a role must not be able to tamper with the system nor to access other user's data.
-CLIP OS is designed to grant these accesses to the administrator:
-* devices visibility management;
-* time and date configuration;
-* user management ([userd](https://github.com/clipos-archive/src_platform_userd));
-* networking and IPsec management ([clip-netd](https://github.com/clipos-archive/src_platform_clip-netd));
-* display configuration;
-* optional packages (e.g., user applications) installation and uninstallation;
-* and system update configuration ([downloadrequest](https://github.com/clipos-archive/src_platform_downloadrequest)), but not package signature authorities.
+Le but du rôle d'administrateur est de configurer le système.
+Cependant, un tel rôle ne doit pas être en mesure d'altérer le système ni d'accéder aux données des autres utilisateurs.
+CLIP OS est conçu pour accorder ces accès à l'administrateur :
+* gestion de la visibilité des périphériques ;
+* configuration de l'heure et de la date ;
+* gestion des utilisateurs ([userd](https://github.com/clipos-archive/src_platform_userd)) ;
+* gestion des réseaux et IPsec ([clip-netd](https://github.com/clipos-archive/src_platform_clip-netd)) ;
+* configuration de l'affichage ;
+* installation et désinstallation de paquets optionnels (p. ex., applications utilisateur) ;
+* et configuration de la mise à jour du système ([downloadrequest](https://github.com/clipos-archive/src_platform_downloadrequest)), mais pas les autorités de signature des paquets.
 
-The audit role is used to gather information from the system, but without the ability to access any configuration not related to system logs.
-Log events are only accessible to this role, but in a read-only way.
-Log management (e.g., storage limits, remote transfers) is exclusively allowed to the audit role.
+Le rôle d'audit est utilisé pour collecter des informations du système, mais sans possibilité d'accéder à une configuration non liée aux journaux du système.
+Les événements des journaux ne sont accessibles qu'à ce rôle, mais en lecture seule.
+La gestion des journaux (par exemple, les limites de stockage, les transferts à distance) est exclusivement autorisée au rôle d'audit.
 
-These roles can be used through dedicated GUIs (e.g., [clip-config](https://github.com/clipos-archive/src_platform_clip-config)), or CLIs and files.
-This may be available locally by a logged user, or through a dedicated VPN via an SSH session.
+Ces rôles peuvent être utilisés à travers des interfaces graphiques dédiées (par exemple, [clip-config](https://github.com/clipos-archive/src_platform_clip-config)), ou des CLI et des fichiers.
+Ils peuvent être disponibles localement par un utilisateur connecté, ou par un VPN dédié via une session SSH.
 
-## Authentication and cryptography
+## Authentification et cryptographie
 
-We use a hardened system password manager ([PAM tcb](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/sys-apps/tcb) from Openwall) with the bcrypt hashing algorithm.
-On embedded devices, users are automatically jailed in the appropriate VServer container when logging in on the command line, through the [PAM jail](https://github.com/clipos-archive/src_platform_pam_jail) module, while on desktop environments, similar jailing is enforced by the graphical login interface.
-User's data is stored on dedicated encrypted partitions.
-There is one partition per user environment: the core system, the *low* level and the *high* level.
-User partition devices are automatically open, decrypted and mounted (in their dedicated jail) when the user logs in.
-The secret key used for the related cryptographic operations is derived from a password or decrypted by a smartcard.
-Finally, the partition is unmounted and closed when the user session is closed.
+Nous utilisons un gestionnaire de mots de passe système renforcé ([PAM tcb](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/sys-apps/tcb) d'Openwall) avec l'algorithme de hachage bcrypt.
+Sur les périphériques embarqués, les utilisateurs sont automatiquement emprisonnés dans le conteneur VServer approprié lorsqu'ils se connectent en ligne de commande, grâce au module [PAM jail](https://github.com/clipos-archive/src_platform_pam_jail), tandis que sur les environnements de bureau, un emprisonnement similaire est appliqué par l'interface graphique de connexion.
+Les données des utilisateurs sont stockées sur des partitions chiffrées dédiées.
+Il y a une partition par environnement utilisateur : le système de base, le niveau *faible* et le niveau *élevé*.
+Les partitions des utilisateurs sont automatiquement ouvertes, décryptées et montées (dans leur prison dédiée) lorsque l'utilisateur se connecte.
+La clé secrète utilisée pour les opérations cryptographiques associées est dérivée d'un mot de passe ou décryptée par une carte à puce.
+Enfin, la partition est démontée et fermée lorsque la session utilisateur est fermée.
 
-A smartcard can be used simultaneously for user authentication and in multiple isolated environments at the same time thanks to [Caml Crush and multiple dedicated jails](https://github.com/clipos-archive/clipos4_portage-overlay-clip/blob/master/app-crypt/pkcs11-proxy/pkcs11-proxy-1.0.7-r3.ebuild#L86).
-Smartcard management is handled through multiple packages: [ckiutl](https://github.com/clipos-archive/src_platform_ckiutl), [smartcard-monitor](https://github.com/clipos-archive/src_platform_smartcard-monitor), a [scdaemon](https://github.com/clipos-archive/src_platform_scdaemon)-like (PGP), etc.
+Une carte à puce peut être utilisée simultanément pour l'authentification de l'utilisateur et dans plusieurs environnements isolés en même temps grâce à [Caml Crush et plusieurs jails dédiés](https://github.com/clipos-archive/clipos4_portage-overlay-clip/blob/master/app-crypt/pkcs11-proxy/pkcs11-proxy-1.0.7-r3.ebuild#L86).
+La gestion de la carte à puce est assurée par plusieurs paquets : [ckiutl](https://github.com/clipos-archive/src_platform_ckiutl), [smartcard-monitor](https://github.com/clipos-archive/src_platform_smartcard-monitor), un [scdaemon](https://github.com/clipos-archive/src_platform_scdaemon)-like (PGP), etc.
 
-Even if the system partition set can be encrypted and an early stage development for TPM support is present (e.g., [tpm-cmd](https://github.com/clipos-archive/src_platform_tpm-cmd), [clip-livecd](https://github.com/clipos-archive/src_platform_clip-livecd/blob/master/sbin-scripts/full_install.sh#L119), [clip-kernel](https://github.com/clipos-archive/clipos4_portage-overlay-clip/blob/master/sys-kernel/clip-kernel/files/initrd-clip#L473) and [syslinux-tpm-patches](https://github.com/clipos-archive/src_platform_syslinux-tpm-patches)), CLIP OS 4 does not include physical tampering in its threat model.
-This is one of the main reasons for a 5th version of CLIP OS, not upgradable from the 4th one.
+Même si le jeu de partitions du système peut être chiffré et qu'une première étape de développement pour le support de TPM est présente (par exemple, [tpm-cmd](https://github.com/clipos-archive/src_platform_tpm-cmd), [clip-livecd](https://github.com/clipos-archive/src_platform_clip-livecd/blob/master/sbin-scripts/full_install.sh#L119), [clip-kernel](https://github.com/clipos-archive/clipos4_portage-overlay-clip/blob/master/sys-kernel/clip-kernel/files/initrd-clip#L473) et [syslinux-tpm-patches](https://github.com/clipos-archive/src_platform_syslinux-tpm-patches)), CLIP OS 4 n'inclut pas l'altération physique dans son modèle de menace.
+C'est l'une des raisons principales pour lesquelles la 5ème version de CLIP OS n'est pas évolutive par rapport à la 4ème.
 
-Multiple IPsec VPNs can be established by a client: *high* level network, update network, admin network and audit network.
-A CLIP OS [gateway](https://github.com/clipos-archive/src_platform_clip-gtw-net) and a dedicated PKI can be set up to handle CLIP OS clients and their networks.
+Plusieurs VPN IPsec peuvent être établis par un client : réseau *haut* niveau, réseau de mise à jour, réseau d'administration et réseau d'audit.
+Une [passerelle] CLIP OS (https://github.com/clipos-archive/src_platform_clip-gtw-net) et une PKI dédiée peuvent être mises en place pour gérer les clients CLIP OS et leurs réseaux.
 
-To avoid common entropy issues, a [kernel patch](https://github.com/clipos-archive/src_platform_clip-patches/blob/master/1702_get_random_bytes_rdrand.patch) and a [userspace daemon](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/sys-apps/timer_entropyd) feed the PRNG.
+Pour éviter les problèmes d'entropie courants, un [correctif du noyau](https://github.com/clipos-archive/src_platform_clip-patches/blob/master/1702_get_random_bytes_rdrand.patch) et un [démon de l'espace utilisateur](https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/sys-apps/timer_entropyd) alimentent le PRNG.
 
-CLIP OS also provides user tools such as a simplified and hardened PKI management tool: [ANSSI-PKI](https://github.com/clipos-archive/src_platform_anssipki-cli).
+CLIP OS fournit également des outils utilisateurs tels qu'un outil de gestion de l'ICP simplifié et renforcé : [ANSSI-PKI](https://github.com/clipos-archive/src_platform_anssipki-cli).
 
-# French documentation
+# documentation en Français
 
-The main public talk about CLIP OS 4 was given at the [SSTIC conference in 2015](https://www.sstic.org/2015/presentation/clip/).
+La principale conférence publique sur CLIP OS 4 a été donnée lors de la [conférence du SSTIC en 2015] (https://www.sstic.org/2015/presentation/clip/).
 
-This repository contains a selection of the initial documents in French targeting multiple audiences: end users, administrators and developers.
+Ce référentiel contient une sélection des documents initiaux en français destinés à de multiples publics : utilisateurs finaux, administrateurs et développeurs.
 
-## User
+## Utilisateur
 
 * [Le changement de mot de passe dans CLIP](utilisateur/changer-mdp.pdf)
 * [Écran étendu](utilisateur/configurer-ecran_etendu.pdf)
@@ -150,7 +150,7 @@ This repository contains a selection of the initial documents in French targetin
 * [Guide de démarrage du client CLIP](utilisateur/tour-du-poste-clip.pdf)
 * [Clés USB](utilisateur/utiliser-cles-usb.pdf)
 
-## Administrator
+## Administrateur
 
 * [Administration en ligne de commande d'une passerelle CLIP](administrateur/administration-ligne-de-commande-passerelle.pdf)
 * [Mise en place de l'administration à distance des passerelles CLIP](administrateur/ajouter-acces_ssh.pdf)
@@ -162,7 +162,7 @@ This repository contains a selection of the initial documents in French targetin
 * [Installation de CLIP](administrateur/installer-passerelle_clip.pdf)
 * [Rôle et gestion des certificats dans CLIP](administrateur/roles-certificats.pdf)
 
-## Developer
+## Développeur
 
 * [Description Générale](developpeur/0001_Description_Generale_1.0.pdf)
 * [Description Fonctionnelle](developpeur/1001a_Perimetre_Fonctionnel_CLIP-RM_1.0.4.pdf)
@@ -193,9 +193,9 @@ This repository contains a selection of the initial documents in French targetin
 
 Copyright © 2018 [ANSSI](https://www.ssi.gouv.fr/).
 
-CLIP OS is a trademark of the French Republic.
-As a consequence, any use of the name "CLIP OS" has to be first authorized by the ANSSI.
-This does not preclude changes to the software posted online and their republication or quotation from identifying the original software under the terms of the LGPL v2.1+ license.
-Regardless, no use of the name "CLIP OS" on a modified version should suggest that this version is the original work published by the ANSSI.
+CLIP OS est une marque de la République Française.
+En conséquence, toute utilisation du nom "CLIP OS" doit être préalablement autorisée par l'ANSSI.
+Cela n'empêche pas les modifications des logiciels mis en ligne et leur republication ou citation d'identifier le logiciel original selon les termes de la licence LGPL v2.1+.
+Néanmoins, l'utilisation du nom " CLIP OS " sur une version modifiée ne doit pas suggérer que cette version est l'œuvre originale publiée par l'ANSSI.
 
-The contents of this documentation is available under the Open License version 2.0 (compatible with the [CC-BY](https://creativecommons.org/licenses/by/2.0/) license) as published by [Etalab](https://www.etalab.gouv.fr/) (French task force for Open Data).
+Le contenu de cette documentation est disponible sous la licence Open License version 2.0 (compatible avec la licence [CC-BY](https://creativecommons.org/licenses/by/2.0/)) telle que publiée par [Etalab](https://www.etalab.gouv.fr/) (groupe de travail français pour l'Open Data).
